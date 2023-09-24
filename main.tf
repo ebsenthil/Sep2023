@@ -92,3 +92,24 @@ resource "aws_instance" "sen-test-vm" {
   
 }
 
+provisioner "remote-exec" {
+    inline = [
+      "echo 'Hello from the remote instance'",
+      "sudo apt update -y",  # Update package lists (for ubuntu)
+      "sudo apt-get install -y python3-pip",  # Example package installation
+      "cd /home/ubuntu",
+      "sudo pip3 install flask",
+      "sudo python3 app.py &",
+"sudo dnf update" #To Install Latest Update
+"sudo dnf install -y nginx" # Install Nginx
+"sudo systemctl start nginx.service" # Start Nginx Server
+"sudo systemctl status nginx.service" # Check Server Status
+"sudo systemctl enable nginx.service" # Enable Auto Server Start on Reboot
+    ]
+  }
+}
+
+provisioner "file" {
+    source      = "index.html"
+    destination = "/usr/share/nginx/html/index.html"
+  }
