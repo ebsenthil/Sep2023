@@ -66,6 +66,15 @@ ingress {
 
   }
 
+  ingress {
+    description      = "allow http"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+
+  }
+
   egress {
     description      = "allow all"
     from_port        = 0
@@ -90,26 +99,20 @@ resource "aws_instance" "sen-test-vm" {
     host = self.public_ip
   }
   
-}
 
 provisioner "remote-exec" {
-    inline = [
-      "echo 'Hello from the remote instance'",
-      "sudo apt update -y",  # Update package lists (for ubuntu)
-      "sudo apt-get install -y python3-pip",  # Example package installation
-      "cd /home/ubuntu",
-      "sudo pip3 install flask",
-      "sudo python3 app.py &",
-"sudo dnf update" #To Install Latest Update
-"sudo dnf install -y nginx" # Install Nginx
-"sudo systemctl start nginx.service" # Start Nginx Server
-"sudo systemctl status nginx.service" # Check Server Status
-"sudo systemctl enable nginx.service" # Enable Auto Server Start on Reboot
+inline = [
+"sudo dnf update", #To Install Latest Update
+"sudo dnf install -y nginx", # Install Nginx
+"sudo systemctl start nginx.service", # Start Nginx Server
+"sudo chmod 777 /usr/share/nginx/html/index.html"
     ]
   }
-}
+
 
 provisioner "file" {
     source      = "index.html"
     destination = "/usr/share/nginx/html/index.html"
+  }
+
   }
